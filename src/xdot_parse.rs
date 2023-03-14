@@ -25,8 +25,9 @@ fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
 
 /// A [Shape] together with a [Pen].
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass)]
+#[cfg_attr(feature = "pyo3", pyo3::pyclass(get_all, set_all))]
 pub struct ShapeDraw {
+    #[pyo3(get, set)]
     pub pen: Pen,
     pub shape: Shape,
 }
@@ -41,6 +42,10 @@ impl ShapeDraw {
     #[getter]
     fn get_shape(&self) -> shapes::PyShape {
         shapes::PyShape(self.shape.clone())
+    }
+    #[setter]
+    fn set_shape(&mut self, shape: shapes::PyShape) {
+        self.shape = shape.0;
     }
 }
 

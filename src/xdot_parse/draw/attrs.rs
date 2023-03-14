@@ -5,7 +5,7 @@ use bitflags::bitflags;
 
 /// RGBA color representation with 8 bit per channel.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass)]
+#[cfg_attr(feature = "pyo3", pyo3::pyclass(get_all, set_all))]
 pub struct Rgba {
     pub r: u8,
     pub g: u8,
@@ -26,7 +26,7 @@ impl Default for Rgba {
 /// Line style for node borders and edges.
 /// See [here](https://graphviz.org/docs/attr-types/style/).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass)]
+#[cfg_attr(feature = "pyo3", pyo3::pyclass(get_all, set_all))]
 pub enum Style {
     Dashed,
     Dotted,
@@ -55,7 +55,7 @@ bitflags! {
     /// Font weight and decorations.
     /// Matches values defined [here](https://graphviz.org/docs/outputs/canon/#xdot).
     #[derive(Default)]
-    #[cfg_attr(feature= "pyo3", pyo3::pyclass)]
+    #[cfg_attr(feature= "pyo3", pyo3::pyclass(get_all, set_all))]
     pub struct FontCharacteristics: u128 {
         const BOLD           = 0b00000001;
         const ITALIC         = 0b00000010;
