@@ -137,7 +137,7 @@ impl From<Text> for PyShape {
 /// External image, currently unimplemented.
 #[doc(hidden)]
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass(get_all, set_all))]
+#[cfg_attr(feature = "pyo3", pyo3::pyclass)]
 pub struct ExternalImage;
 
 #[cfg(feature = "pyo3")]

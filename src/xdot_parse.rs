@@ -47,6 +47,21 @@ impl ShapeDraw {
     fn set_shape(&mut self, shape: shapes::PyShape) {
         self.shape = shape.0;
     }
+    fn __richcmp__(
+        &self,
+        other: pyo3::PyRef<ShapeDraw>,
+        op: pyo3::basic::CompareOp,
+    ) -> pyo3::Py<pyo3::PyAny> {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        let py = other.py();
+        match op {
+            Eq => (*self == *other).into_py(py),
+            Ne => (*self != *other).into_py(py),
+            _ => py.NotImplemented(),
+        }
+    }
 }
 
 /// Parse an `xdot` draw attribute (as defined [here](https://graphviz.org/docs/outputs/canon/#xdot)).
