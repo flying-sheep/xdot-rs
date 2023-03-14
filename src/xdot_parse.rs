@@ -10,6 +10,19 @@ pub mod shapes;
 pub use self::draw::Pen;
 use self::shapes::Shape;
 
+#[cfg(feature = "pyo3")]
+fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
+    if let Ok(ell) = shape.extract::<shapes::Ellipse>() {
+        Ok(ell.into())
+    } else if let Ok(points) = shape.extract::<shapes::Points>() {
+        Ok(points.into())
+    } else if let Ok(text) = shape.extract::<shapes::Text>() {
+        Ok(text.into())
+    } else {
+        shape.extract::<shapes::PyShape>().map(|s| s.0)
+    }
+}
+
 /// A [Shape] together with a [Pen].
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "pyo3", pyo3::pyclass)]
@@ -21,11 +34,9 @@ pub struct ShapeDraw {
 #[pyo3::pymethods]
 impl ShapeDraw {
     #[new]
-    fn new(shape: shapes::PyShape, pen: Pen) -> Self {
-        ShapeDraw {
-            shape: shape.0,
-            pen,
-        }
+    fn new(shape: &pyo3::PyAny, pen: Pen) -> pyo3::PyResult<Self> {
+        let shape = try_into_shape(shape)?;
+        Ok(ShapeDraw { shape, pen })
     }
     #[getter]
     fn get_shape(&self) -> shapes::PyShape {

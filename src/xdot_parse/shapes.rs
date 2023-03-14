@@ -11,6 +11,7 @@ pub enum Shape {
 #[derive(Debug, Clone, PartialEq)]
 #[pyo3::pyclass(name = "Shape")]
 pub struct PyShape(pub Shape);
+#[cfg(feature = "pyo3")]
 impl From<Shape> for PyShape {
     fn from(val: Shape) -> Self {
         PyShape(val)
