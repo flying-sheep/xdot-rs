@@ -19,7 +19,7 @@ test:
     just test-rs
     just test-py
 test-rs:
-    cargo hack --feature-powerset test --locked
+    cargo hack --feature-powerset --skip=extension-module test --locked
 test-py:
     pytest -v
 

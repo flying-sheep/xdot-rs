@@ -27,7 +27,7 @@ fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "pyo3", pyo3::pyclass)]
 pub struct ShapeDraw {
-    #[pyo3(get, set)]
+    // #[pyo3(get, set)] not possible with cfg_attr
     pub pen: Pen,
     pub shape: Shape,
 }
@@ -38,6 +38,14 @@ impl ShapeDraw {
     fn new(shape: &pyo3::PyAny, pen: Pen) -> pyo3::PyResult<Self> {
         let shape = try_into_shape(shape)?;
         Ok(ShapeDraw { shape, pen })
+    }
+    #[getter]
+    fn get_pen(&self) -> Pen {
+        self.pen.clone()
+    }
+    #[setter]
+    fn set_pen(&mut self, pen: Pen) {
+        self.pen = pen;
     }
     #[getter]
     fn get_shape(&self) -> shapes::PyShape {
@@ -62,6 +70,33 @@ impl ShapeDraw {
             _ => py.NotImplemented(),
         }
     }
+}
+
+#[cfg(feature = "pyo3")]
+#[test]
+fn cmp_equal() {
+    use super::*;
+    use pyo3::prelude::*;
+    use pyo3::pyclass::CompareOp;
+
+    pyo3::prepare_freethreaded_python();
+
+    let ellip = shapes::Ellipse {
+        x: 0.,
+        y: 0.,
+        w: 0.,
+        h: 0.,
+        filled: true,
+    };
+    Python::with_gil(|py| {
+        let a = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
+        let b = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
+        assert!(a
+            .__richcmp__(PyCell::new(py, b)?.try_into()?, CompareOp::Eq)
+            .extract::<bool>(py)?);
+        Ok::<(), PyErr>(())
+    })
+    .unwrap();
 }
 
 /// Parse an `xdot` draw attribute (as defined [here](https://graphviz.org/docs/outputs/canon/#xdot)).
