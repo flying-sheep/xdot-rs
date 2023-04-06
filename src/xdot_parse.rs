@@ -57,8 +57,8 @@ impl ShapeDraw {
     }
     fn __richcmp__(
         &self,
-        other: &ShapeDraw,
-        op: pyo3::basic::CompareOp,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
         py: pyo3::Python,
     ) -> pyo3::PyObject {
         use pyo3::pyclass::CompareOp::*;
@@ -91,9 +91,7 @@ fn cmp_equal() {
     Python::with_gil(|py| {
         let a = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
         let b = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
-        assert!(a
-            .__richcmp__(PyCell::new(py, b)?.try_into()?, CompareOp::Eq)
-            .extract::<bool>(py)?);
+        assert!(a.__richcmp__(&b, CompareOp::Eq, py).extract::<bool>(py)?);
         Ok::<(), PyErr>(())
     })
     .unwrap();
