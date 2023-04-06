@@ -57,16 +57,16 @@ impl ShapeDraw {
     }
     fn __richcmp__(
         &self,
-        other: pyo3::PyRef<ShapeDraw>,
+        other: &ShapeDraw,
         op: pyo3::basic::CompareOp,
-    ) -> pyo3::Py<pyo3::PyAny> {
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
         use pyo3::pyclass::CompareOp::*;
         use pyo3::IntoPy;
 
-        let py = other.py();
         match op {
-            Eq => (*self == *other).into_py(py),
-            Ne => (*self != *other).into_py(py),
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
             _ => py.NotImplemented(),
         }
     }
