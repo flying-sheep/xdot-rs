@@ -1,5 +1,5 @@
 [build-system]
-requires = ['maturin>=1.0.0-beta.5']
+requires = ['maturin>=1.0.0-beta.6']
 build-backend = 'maturin'
 
 [project]
@@ -27,8 +27,8 @@ test = [
 ]
 
 [tool.maturin]
+module-name = 'xdot_rs'
 features = ['pyo3']
-python-modules = ['xdot_rs']
 
 [tool.ruff]
 select = [

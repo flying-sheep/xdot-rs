@@ -14,9 +14,6 @@ categories = ['parser-implementations', 'rendering::data-formats']
 [package.metadata.docs.rs]
 all-features = true
 
-[package.metadata.maturin]
-name = 'xdot_rs'
-
 [features]
 ## The `layout` feature allows to parse `xdot` attributes from
 ## [graphviz_rust]’s [Graph](graphviz_rust::dot_structures::Graph)s
