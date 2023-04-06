@@ -48,13 +48,20 @@ impl ShapeDraw {
         self.pen = pen;
     }
     #[getter]
-    fn get_shape(&self) -> shapes::PyShape {
-        shapes::PyShape(self.shape.clone())
+    fn get_shape(&self, py: pyo3::Python) -> pyo3::PyObject {
+        use pyo3::IntoPy;
+        match &self.shape {
+            Shape::Ellipse(e) => e.clone().into_py(py),
+            Shape::Points(p) => p.clone().into_py(py),
+            Shape::Text(t) => t.clone().into_py(py),
+        }
     }
     #[setter]
-    fn set_shape(&mut self, shape: shapes::PyShape) {
-        self.shape = shape.0;
+    fn set_shape(&mut self, shape: &pyo3::PyAny) -> pyo3::PyResult<()> {
+        self.shape = try_into_shape(shape)?;
+        Ok(())
     }
+    // TODO: dedup
     fn __richcmp__(
         &self,
         other: &Self,

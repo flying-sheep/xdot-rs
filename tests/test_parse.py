@@ -9,9 +9,17 @@ def test_import_structure():
     assert isinstance(xdot_rs.ShapeDraw, type)
 
 
-@pytest.mark.parametrize("input", ["e 27 90 27 18"])
+@pytest.mark.parametrize("input", ["e 27 90 18 3"])
 def test_parse(input):
-    assert xdot_rs.parse(input) == [xdot_rs.ShapeDraw(Ellipse(27, 90, 27, 18), Pen())]
+    [sd] = xdot_rs.parse(input)
+    assert (sd.shape.x, sd.shape.y) == (27.0, 90.0)
+    assert (sd.shape.w, sd.shape.h) == (18.0, 3.0)
+    assert sd.shape == (ell := Ellipse(27.0, 90.0, 18.0, 3.0, filled=False))
+    assert sd.pen == Pen()
+    assert sd == xdot_rs.ShapeDraw(ell, Pen())
+
+
+# TODO: test that pens influence comparison
 
 
 def test_parse_error():

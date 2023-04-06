@@ -226,15 +226,15 @@ pub(super) fn parse(input: &str) -> Result<Vec<Op>, NomError<&str>> {
 #[test]
 fn test_ellipse() {
     assert_eq!(
-        parse_op_draw_shape_ellipse("e 27 90 27 18"),
+        parse_op_draw_shape_ellipse("e 27 90 18 3"),
         Ok((
             "",
             Ellipse {
                 filled: false,
                 x: 27.,
                 y: 90.,
-                w: 27.,
-                h: 18.,
+                w: 18.,
+                h: 3.,
             }
             .into()
         ))

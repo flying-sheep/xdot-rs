@@ -36,6 +36,22 @@ impl Ellipse {
     fn new(x: f32, y: f32, w: f32, h: f32, filled: bool) -> Self {
         Ellipse { x, y, w, h, filled }
     }
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
+        }
+    }
 }
 impl From<Ellipse> for Shape {
     fn from(val: Ellipse) -> Self {
@@ -75,6 +91,22 @@ impl Points {
             points,
             r#type,
             filled,
+        }
+    }
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
         }
     }
 }
@@ -119,6 +151,22 @@ impl Text {
             align,
             width,
             text,
+        }
+    }
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
         }
     }
 }
