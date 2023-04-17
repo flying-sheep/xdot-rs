@@ -19,7 +19,10 @@ fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
     } else if let Ok(text) = shape.extract::<shapes::Text>() {
         Ok(text.into())
     } else {
-        shape.extract::<shapes::PyShape>().map(|s| s.0)
+        Err(pyo3::exceptions::PyTypeError::new_err(format!(
+            "Cannot convert object of type {} to Shape",
+            shape.get_type().name()?
+        )))
     }
 }
 

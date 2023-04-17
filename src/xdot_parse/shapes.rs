@@ -7,16 +7,6 @@ pub enum Shape {
     Points(Points),
     Text(Text),
 }
-#[cfg(feature = "pyo3")]
-#[derive(Debug, Clone, PartialEq)]
-#[pyo3::pyclass(name = "Shape")]
-pub struct PyShape(pub Shape);
-#[cfg(feature = "pyo3")]
-impl From<Shape> for PyShape {
-    fn from(val: Shape) -> Self {
-        PyShape(val)
-    }
-}
 
 /// A horizontal ellipse shape.
 #[derive(Debug, Clone, PartialEq)]
@@ -56,12 +46,6 @@ impl Ellipse {
 impl From<Ellipse> for Shape {
     fn from(val: Ellipse) -> Self {
         Shape::Ellipse(val)
-    }
-}
-#[cfg(feature = "pyo3")]
-impl From<Ellipse> for PyShape {
-    fn from(val: Ellipse) -> Self {
-        Shape::from(val).into()
     }
 }
 
@@ -113,12 +97,6 @@ impl Points {
 impl From<Points> for Shape {
     fn from(val: Points) -> Self {
         Shape::Points(val)
-    }
-}
-#[cfg(feature = "pyo3")]
-impl From<Points> for PyShape {
-    fn from(val: Points) -> Self {
-        Shape::from(val).into()
     }
 }
 
@@ -175,12 +153,6 @@ impl From<Text> for Shape {
         Shape::Text(val)
     }
 }
-#[cfg(feature = "pyo3")]
-impl From<Text> for PyShape {
-    fn from(val: Text) -> Self {
-        Shape::from(val).into()
-    }
-}
 
 /// External image, currently unimplemented.
 #[doc(hidden)]
@@ -192,7 +164,6 @@ pub struct ExternalImage;
 #[pyo3::pymodule]
 #[pyo3(name = "shapes")]
 pub fn pymodule(_py: pyo3::Python, m: &pyo3::types::PyModule) -> pyo3::PyResult<()> {
-    m.add_class::<PyShape>()?;
     m.add_class::<Ellipse>()?;
     m.add_class::<PointsType>()?;
     m.add_class::<Points>()?;
