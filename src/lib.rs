@@ -11,6 +11,8 @@
 //! ## Feature flags
 #![cfg_attr(all(doc, feature = "document-features"), doc = document_features::document_features!())]
 
+#[macro_use]
+mod impl_help;
 #[cfg(feature = "layout")]
 mod layout;
 mod xdot_parse;
