@@ -16,19 +16,15 @@ def test_parse(input):
     [sd] = xdot_rs.parse(input)
     assert (sd.shape.x, sd.shape.y) == (27.0, 90.0)
     assert (sd.shape.w, sd.shape.h) == (18.0, 3.0)
-    assert sd.shape == (ell := Ellipse(27.0, 90.0, 18.0, 3.0, filled=False))
-    assert sd.pen.color == Pen().color
-    assert sd.pen.fill_color == Pen().fill_color
-    assert sd.pen.line_width == Pen().line_width
-    assert sd.pen.line_style == Pen().line_style
-    assert sd.pen.font_size == Pen().font_size
-    assert sd.pen.font_name == Pen().font_name
-    assert sd.pen.font_characteristics == Pen().font_characteristics
-    assert sd.pen == Pen()
-    assert sd == xdot_rs.ShapeDraw(ell, Pen())
+    assert sd == xdot_rs.ShapeDraw(Ellipse(27.0, 90.0, 18.0, 3.0, filled=False), Pen())
 
 
-# TODO: test that pens influence comparison
+def test_uneq():
+    pen = Pen(font_size=1.0)
+    assert pen != Pen()
+
+    ell = Ellipse(0.0, 0.0, 0.0, 0.0)
+    assert xdot_rs.ShapeDraw(ell, pen) != xdot_rs.ShapeDraw(ell, Pen())
 
 
 def test_parse_error():
