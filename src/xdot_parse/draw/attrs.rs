@@ -25,11 +25,7 @@ impl Default for Rgba {
         }
     }
 }
-#[cfg(feature = "pyo3")]
-#[pyo3::pymethods]
-impl Rgba {
-    impl_richcmp_eq!();
-}
+impl_richcmp_eq!(Rgba);
 
 /// Line style for node borders and edges.
 /// See [here](https://graphviz.org/docs/attr-types/style/).
@@ -61,11 +57,7 @@ impl FromStr for Style {
         })
     }
 }
-#[cfg(feature = "pyo3")]
-#[pyo3::pymethods]
-impl Style {
-    impl_richcmp_eq!();
-}
+impl_richcmp_eq!(Style);
 
 bitflags! {
     /// Font weight and decorations.
@@ -85,8 +77,4 @@ bitflags! {
         const OVERLINE       = 0b01000000;
     }
 }
-#[cfg(feature = "pyo3")]
-#[pyo3::pymethods]
-impl FontCharacteristics {
-    impl_richcmp_eq!();
-}
+impl_richcmp_eq!(FontCharacteristics);

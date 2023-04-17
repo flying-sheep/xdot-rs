@@ -14,9 +14,22 @@ def test_import_structure():
 @pytest.mark.parametrize("input", ["e 27 90 18 3"])
 def test_parse(input):
     [sd] = xdot_rs.parse(input)
-    assert (sd.shape.x, sd.shape.y) == (27.0, 90.0)
-    assert (sd.shape.w, sd.shape.h) == (18.0, 3.0)
-    assert sd == xdot_rs.ShapeDraw(Ellipse(27.0, 90.0, 18.0, 3.0, filled=False), Pen())
+    ell = Ellipse(27.0, 90.0, 18.0, 3.0, filled=False)
+    assert (sd.shape.x, sd.shape.y) == (ell.x, ell.y)
+    assert (sd.shape.w, sd.shape.h) == (ell.w, ell.h)
+    assert sd.shape.filled == ell.filled
+    assert sd.shape == ell
+    pen = Pen()
+    assert sd.pen.color == pen.color
+    assert sd.pen.fill_color == pen.fill_color
+    assert sd.pen.line_width == pen.line_width
+    assert sd.pen.line_style == pen.line_style
+    assert sd.pen.font_size == pen.font_size
+    assert sd.pen.font_name == pen.font_name
+    assert sd.pen.font_characteristics == pen.font_characteristics
+    assert sd.pen == pen
+    assert sd == xdot_rs.ShapeDraw(ell, pen)
+    assert sd == xdot_rs.ShapeDraw(Ellipse(27.0, 90.0, 18.0, 3.0, filled=False), pen)
 
 
 def test_uneq():

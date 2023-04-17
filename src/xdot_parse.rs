@@ -64,8 +64,8 @@ impl ShapeDraw {
         self.shape = try_into_shape(shape)?;
         Ok(())
     }
-    impl_richcmp_eq!();
 }
+impl_richcmp_eq!(ShapeDraw);
 
 #[cfg(feature = "pyo3")]
 #[test]

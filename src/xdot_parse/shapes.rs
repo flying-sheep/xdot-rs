@@ -29,8 +29,8 @@ impl Ellipse {
     fn new(x: f32, y: f32, w: f32, h: f32, filled: bool) -> Self {
         Ellipse { x, y, w, h, filled }
     }
-    impl_richcmp_eq!();
 }
+impl_richcmp_eq!(Ellipse);
 impl From<Ellipse> for Shape {
     fn from(val: Ellipse) -> Self {
         Shape::Ellipse(val)
@@ -71,8 +71,8 @@ impl Points {
             filled,
         }
     }
-    impl_richcmp_eq!();
 }
+impl_richcmp_eq!(Points);
 impl From<Points> for Shape {
     fn from(val: Points) -> Self {
         Shape::Points(val)
@@ -116,8 +116,8 @@ impl Text {
             text,
         }
     }
-    impl_richcmp_eq!();
 }
+impl_richcmp_eq!(Text);
 impl From<Text> for Shape {
     fn from(val: Text) -> Self {
         Shape::Text(val)

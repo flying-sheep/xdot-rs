@@ -64,8 +64,8 @@ impl Pen {
             font_characteristics,
         }
     }
-    impl_richcmp_eq!();
 }
+impl_richcmp_eq!(Pen);
 
 #[cfg(feature = "pyo3")]
 #[pyo3::pymodule]
