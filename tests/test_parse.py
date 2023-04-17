@@ -6,7 +6,9 @@ from xdot_rs.shapes import Ellipse
 
 def test_import_structure():
     assert callable(xdot_rs.parse)  # not a FunctionType?
+    # TODO: assert xdot_rs.parse.__module__ == "xdot_rs"
     assert isinstance(xdot_rs.ShapeDraw, type)
+    assert xdot_rs.ShapeDraw.__module__ == "xdot_rs"
 
 
 @pytest.mark.parametrize("input", ["e 27 90 18 3"])
