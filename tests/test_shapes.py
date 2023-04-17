@@ -5,7 +5,7 @@ from xdot_rs import shapes
 
 def test_import_structure():
     assert isinstance(shapes, ModuleType)
-    # assert isinstance(shapes.Shape, type)
+    # TODO: add superclass: assert isinstance(shapes.Shape, type)
     assert isinstance(shapes.Ellipse, type)
     assert shapes.Ellipse.__module__ == "xdot_rs.shapes"
     assert isinstance(shapes.PointsType, type)

@@ -25,6 +25,26 @@ impl Default for Rgba {
         }
     }
 }
+#[cfg(feature = "pyo3")]
+#[pyo3::pymethods]
+impl Rgba {
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
+        }
+    }
+}
 
 /// Line style for node borders and edges.
 /// See [here](https://graphviz.org/docs/attr-types/style/).
@@ -56,6 +76,26 @@ impl FromStr for Style {
         })
     }
 }
+#[cfg(feature = "pyo3")]
+#[pyo3::pymethods]
+impl Style {
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
+        }
+    }
+}
 
 bitflags! {
     /// Font weight and decorations.
@@ -73,5 +113,25 @@ bitflags! {
         const SUBSCRIPT      = 0b00010000;
         const STRIKE_THROUGH = 0b00100000;
         const OVERLINE       = 0b01000000;
+    }
+}
+#[cfg(feature = "pyo3")]
+#[pyo3::pymethods]
+impl FontCharacteristics {
+    // TODO: dedup
+    fn __richcmp__(
+        &self,
+        other: &Self,
+        op: pyo3::pyclass::CompareOp,
+        py: pyo3::Python,
+    ) -> pyo3::PyObject {
+        use pyo3::pyclass::CompareOp::*;
+        use pyo3::IntoPy;
+
+        match op {
+            Eq => (self == other).into_py(py),
+            Ne => (self != other).into_py(py),
+            _ => py.NotImplemented(),
+        }
     }
 }
