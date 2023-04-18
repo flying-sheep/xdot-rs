@@ -4,14 +4,14 @@ use std::str::FromStr;
 
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take, take_while_m_n},
+    bytes::complete::{tag, take_while_m_n},
     character::complete::{char, multispace0, multispace1, one_of},
     combinator::{eof, flat_map, map, map_parser, map_res, recognize, value},
     error::{Error as NomError, ParseError},
     multi::{count, many0, many1, separated_list1},
     number::complete::float,
     sequence::{delimited, preceded, separated_pair, terminated, tuple},
-    Finish, IResult,
+    Finish, IResult, ToUsize,
 };
 
 use super::shapes::ExternalImage;
@@ -23,6 +23,24 @@ use super::{
 };
 
 // Combinators
+
+/// Take `count` bytes and throw an error if they don’t match a char boundary
+fn take_bytes<'a, C: ToUsize, E: ParseError<&'a str>>(
+    count: C,
+) -> impl FnMut(&'a str) -> IResult<&'a str, &'a str, E> {
+    let count = count.to_usize();
+    move |input: &str| {
+        if input.is_char_boundary(count) {
+            Ok((&input[count..], &input[..count]))
+        } else {
+            // TODO: better error
+            Err(nom::Err::Error(E::from_error_kind(
+                input,
+                nom::error::ErrorKind::Count,
+            )))
+        }
+    }
+}
 
 fn decimal(input: &str) -> IResult<&str, &str> {
     recognize(many1(terminated(one_of("0123456789"), many0(char('_')))))(input)
@@ -51,9 +69,8 @@ where
 
 /// Parse xdot’s “n -b₁b₂...bₙ” pattern
 fn parse_string(input: &str) -> IResult<&str, &str> {
-    // TODO: take bytes, not chars
     flat_map(map_res(decimal, usize::from_str), |n| {
-        preceded(tuple((multispace1, tag("-"))), take(n))
+        preceded(tuple((multispace1, tag("-"))), take_bytes(n))
     })(input)
 }
 
@@ -255,4 +272,9 @@ fn test_b_spline() {
             .into()
         ))
     )
+}
+
+#[test]
+fn test_string_utf8() {
+    assert_eq!(parse_string("3 -äh"), Ok(("", "äh")))
 }
