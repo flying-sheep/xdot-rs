@@ -1,6 +1,7 @@
 [![CI](https://github.com/flying-sheep/xdot-rust/actions/workflows/rust.yml/badge.svg)](https://github.com/flying-sheep/xdot-rust/actions/workflows/rust.yml)
 [![docs.rs](https://img.shields.io/docsrs/xdot)](https://docs.rs/xdot/latest/xdot/)
 [![Crates.io](https://img.shields.io/crates/v/xdot)](https://crates.io/crates/xdot)
+[![PyPI](https://img.shields.io/pypi/v/xdot-rs)](https://pypi.org/project/xdot-rs/)
 
 xdot
 ====
