@@ -38,6 +38,6 @@ $ cargo build  # update lockfile
 $ git add Cargo.toml Cargo.lock && git commit && git tag v??????
 $ # publish
 $ cargo publish
-$ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin build --release
+$ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin:v1.0.0-beta.7 build --release
 $ twine upload target/wheels/*
 ```
