@@ -24,3 +24,19 @@ use xdot::{layout_and_draw_graph, ShapeDraw};
 let graph: Graph = parse("graph { a -- b}").unwrap();
 let shapes: Vec<ShapeDraw> = layout_and_draw_graph(graph).unwrap();
 ```
+
+Release process
+---------------
+
+To be automated. Currently:
+
+```console
+$ # update version
+$ $EDITOR Cargo.toml  # update version
+$ cargo build  # update lockfile
+$ git add Cargo.toml Cargo.lock && git commit && git tag v??????
+$ # publish
+$ cargo publish
+$ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin build --release
+$ twine upload target/wheels/*
+```
