@@ -29,11 +29,6 @@ let shapes: Vec<ShapeDraw> = layout_and_draw_graph(graph).unwrap();
 Release process
 ---------------
 
-1. Update version via [<kbd>Open Release PR</kbd>](https://github.com/flying-sheep/xdot-rust/actions/workflows/release.yml)
-2. Publish (To be automated)
-
-   ```console
-   $ cargo publish
-   $ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin:v1.0.0-beta.7 build --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
-   $ twine upload target/wheels/*
-   ```
+1. A commit to `main` causes creation or update of a release PR. ([`release` workflow](https://github.com/flying-sheep/xdot-rust/actions/workflows/release.yml))
+2. Merging a release PR causes the creation of a Git tag and GitHub release, and the upload of a Rust crate to [crates.io](https://crates.io).(also `release` workflow)
+3. Publishing this GitHub release in turn triggers building and uploading a Python package. ([`publish` workflow](https://github.com/flying-sheep/xdot-rust/actions/workflows/publish.yml))
