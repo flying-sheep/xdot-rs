@@ -29,15 +29,11 @@ let shapes: Vec<ShapeDraw> = layout_and_draw_graph(graph).unwrap();
 Release process
 ---------------
 
-To be automated. Currently:
+1. Update version via [<kbd>Open Release PR</kbd>](https://github.com/flying-sheep/xdot-rust/actions/workflows/release.yml)
+2. Publish (To be automated)
 
-```console
-$ # update version
-$ $EDITOR Cargo.toml  # update version
-$ cargo build  # update lockfile
-$ git add Cargo.toml Cargo.lock && git commit && git tag v??????
-$ # publish
-$ cargo publish
-$ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin:v1.0.0-beta.7 build --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
-$ twine upload target/wheels/*
-```
+   ```console
+   $ cargo publish
+   $ docker run --rm -v "$PWD:/io" ghcr.io/pyo3/maturin:v1.0.0-beta.7 build --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
+   $ twine upload target/wheels/*
+   ```
