@@ -77,4 +77,50 @@ bitflags! {
         const OVERLINE       = 0b01000000;
     }
 }
+#[cfg(feature = "pyo3")]
+#[pyo3::pymethods]
+impl FontCharacteristics {
+    #[new]
+    #[pyo3(signature = (
+        bold=false,
+        italic=false,
+        underline=false,
+        superscript=false,
+        subscript=false,
+        strike_through=false,
+        overline=false,
+    ))]
+    fn new(
+        bold: bool,
+        italic: bool,
+        underline: bool,
+        superscript: bool,
+        subscript: bool,
+        strike_through: bool,
+        overline: bool,
+    ) -> Self {
+        let mut fc = FontCharacteristics::empty();
+        fc.set_bold(bold);
+        fc.set_italic(italic);
+        fc.set_underline(underline);
+        fc.set_superscript(superscript);
+        fc.set_subscript(subscript);
+        fc.set_strike_through(strike_through);
+        fc.set_overline(overline);
+        fc
+    }
+    fn __repr__(&self) -> String {
+        format!("FontCharacteristics({:?})", self)
+    }
+}
+impl_bitflags_accessors!(
+    FontCharacteristics,
+    bold,
+    italic,
+    underline,
+    superscript,
+    subscript,
+    strike_through,
+    overline,
+);
 impl_richcmp_eq!(FontCharacteristics);
