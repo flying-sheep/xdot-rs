@@ -19,6 +19,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
+    'maturin',  # CLI
     'pre-commit',  # auto-formatting
     'black',  # VS Code format on save
 ]
