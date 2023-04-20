@@ -15,7 +15,7 @@ env:
 
 jobs:
   build_and_test:
-    name: Build, check and test
+    name: Build, check, and test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
