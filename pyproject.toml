@@ -12,7 +12,7 @@ classifiers = [
     'Intended Audience :: Developers',
     'Programming Language :: Python :: 3',
 ]
-urls.Source = 'https://github.com/flying-sheep/xdot-rust'
+urls.Source = 'https://github.com/flying-sheep/xdot-rs'
 dynamic = ['version', 'description']
 requires-python = '>=3.8'
 dependencies = []

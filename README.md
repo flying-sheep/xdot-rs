@@ -1,4 +1,4 @@
-[![CI](https://github.com/flying-sheep/xdot-rust/actions/workflows/rust.yml/badge.svg)](https://github.com/flying-sheep/xdot-rust/actions/workflows/rust.yml)
+[![CI](https://github.com/flying-sheep/xdot-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/flying-sheep/xdot-rs/actions/workflows/rust.yml)
 [![docs.rs](https://img.shields.io/docsrs/xdot)](https://docs.rs/xdot/latest/xdot/)
 [![Crates.io](https://img.shields.io/crates/v/xdot)](https://crates.io/crates/xdot)
 [![PyPI](https://img.shields.io/pypi/v/xdot-rs)](https://pypi.org/project/xdot-rs/)
@@ -29,6 +29,6 @@ let shapes: Vec<ShapeDraw> = layout_and_draw_graph(graph).unwrap();
 Release process
 ---------------
 
-1. A commit to `main` causes creation or update of a release PR. ([`release` workflow](https://github.com/flying-sheep/xdot-rust/actions/workflows/release.yml))
+1. A commit to `main` causes creation or update of a release PR. ([`release` workflow](https://github.com/flying-sheep/xdot-rs/actions/workflows/release.yml))
 2. Merging a release PR causes the creation of a Git tag and GitHub release, and the upload of a Rust crate to [crates.io](https://crates.io).(also `release` workflow)
-3. Publishing this GitHub release in turn triggers building and uploading a Python package. ([`publish` workflow](https://github.com/flying-sheep/xdot-rust/actions/workflows/publish.yml))
+3. Publishing this GitHub release in turn triggers building and uploading a Python package. ([`publish` workflow](https://github.com/flying-sheep/xdot-rs/actions/workflows/publish.yml))
