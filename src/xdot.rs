@@ -21,7 +21,7 @@ impl Parser {
         todo!()
     }
 }
-  
+
 pub(super) fn parse(spec: &str) -> IResult<&str, Vec<ShapeDraw>> {
     // Parser::default().parse(spec)
     todo!()
