@@ -23,7 +23,7 @@ pub(super) enum Style {
 impl Default for Style {
     fn default() -> Self { Style::Solid }
 }
-    
+
 bitflags!{
     /// Matches values in https://graphviz.org/docs/outputs/canon/#xdot
     #[derive(Default)]
