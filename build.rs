@@ -1,4 +1,4 @@
-///! This exists for the doc_auto_cfg feature
+// This exists for the doc_auto_cfg feature
 use rustc_version::{version_meta, Channel};
 
 fn main() {
