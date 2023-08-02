@@ -11,6 +11,9 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: publish
+    permissions:
+      id-token: write # to authenticate as Trusted Publisher to pypi.org
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -30,5 +33,4 @@ jobs:
         args: --sdist --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
     - uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
         packages-dir: target/wheels
