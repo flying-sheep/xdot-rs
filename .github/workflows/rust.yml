@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,7 +17,7 @@ jobs:
     name: Build, check, and test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
@@ -46,17 +45,17 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/configure-pages@v3
+    - uses: actions/checkout@v4
+    - uses: actions/configure-pages@v4
     - uses: dtolnay/rust-toolchain@nightly
     - uses: taiki-e/install-action@v2
       with:
         tool: just
     - uses: Swatinem/rust-cache@v2
     - run: just doc
-    - uses: actions/upload-pages-artifact@v1
+    - uses: actions/upload-pages-artifact@v3
       with:
         path: target/doc
-    - uses: actions/deploy-pages@v1
+    - uses: actions/deploy-pages@v4
       if: github.ref_name == 'main'
       id: deployment
