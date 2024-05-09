@@ -9,5 +9,6 @@ fn main() {
         Channel::Nightly => "CHANNEL_NIGHTLY",
         Channel::Dev => "CHANNEL_DEV",
     };
-    println!("cargo:rustc-cfg={channel}");
+    println!("cargo::rustc-check-cfg=cfg(CHANNEL_NIGHTLY)");
+    println!("cargo::rustc-cfg={channel}");
 }
