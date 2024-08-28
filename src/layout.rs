@@ -20,6 +20,8 @@ pub enum LayoutError {
     #[error("failed to run xdot")]
     Layout(#[from] std::io::Error),
     #[error("failed to parse dot")]
+    Decode(std::string::FromUtf8Error),
+    #[error("failed to parse dot")]
     ParseDot(String),
     #[error("failed to parse xdot attributes")]
     ParseXDot(#[from] NomError<String>),
@@ -52,6 +54,7 @@ fn layout_graph(graph: Graph) -> Result<Graph, LayoutError> {
             CommandArg::Format(Format::Xdot),
         ],
     )?;
+    let layed_out = String::from_utf8(layed_out).map_err(LayoutError::Decode)?;
     // println!("{}", &layed_out);
     graphviz_rust::parse(&layed_out).map_err(LayoutError::ParseDot)
 }
