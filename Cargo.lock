@@ -127,9 +127,9 @@ dependencies = [
 
 [[package]]
 name = "graphviz-rust"
-version = "0.6.6"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27dafd1ac303e0dfb347a3861d9ac440859bab26ec2f534bbceb262ea492a1e0"
+checksum = "8c33d03804e2ce21db5821f2beb4e54f844a8f90326e6bd99a1771dc54aef427"
 dependencies = [
  "dot-generator",
  "dot-structures",
