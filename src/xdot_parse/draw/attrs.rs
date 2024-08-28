@@ -62,10 +62,10 @@ impl_richcmp_eq!(Style);
 bitflags! {
     /// Font weight and decorations.
     /// Matches values defined [here](https://graphviz.org/docs/outputs/canon/#xdot).
-    #[derive(Default)]
+    #[derive(Default, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     #[cfg_attr(
         feature = "pyo3",
-        pyo3::pyclass(get_all, set_all, module = "xdot_rs.draw")
+        pyo3::pyclass(module = "xdot_rs.draw")
     )]
     pub struct FontCharacteristics: u128 {
         const BOLD           = 0b00000001;
@@ -110,7 +110,7 @@ impl FontCharacteristics {
         fc
     }
     fn __repr__(&self) -> String {
-        format!("FontCharacteristics({:?})", self)
+        format!("{:?}", self)
     }
 }
 impl_bitflags_accessors!(
