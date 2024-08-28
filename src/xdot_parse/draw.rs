@@ -8,7 +8,7 @@ pub use self::attrs::{FontCharacteristics, Rgba, Style};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(get_all, set_all, module = "xdot_rs.draw")
+    pyo3::pyclass(eq, get_all, set_all, module = "xdot_rs.draw")
 )]
 pub struct Pen {
     pub color: Rgba,
@@ -65,12 +65,13 @@ impl Pen {
         }
     }
 }
-impl_richcmp_eq!(Pen);
 
 #[cfg(feature = "pyo3")]
 #[pyo3::pymodule]
 #[pyo3(name = "draw")]
-pub fn pymodule(_py: pyo3::Python, m: &pyo3::types::PyModule) -> pyo3::PyResult<()> {
+pub fn pymodule(m: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()> {
+    use pyo3::prelude::*;
+
     m.add_class::<FontCharacteristics>()?;
     m.add_class::<Rgba>()?;
     m.add_class::<Style>()?;

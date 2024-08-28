@@ -34,10 +34,12 @@ pub static ATTR_NAMES: [&str; 6] = [
 #[cfg(feature = "pyo3")]
 #[pyo3::pymodule]
 #[pyo3(name = "xdot_rs")]
-pub fn pymodule(py: pyo3::Python, m: &pyo3::types::PyModule) -> pyo3::PyResult<()> {
+pub fn pymodule(m: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()> {
+    use pyo3::prelude::*;
+
     m.add_class::<ShapeDraw>()?;
     m.add_function(pyo3::wrap_pyfunction!(parse_py, m)?)?;
-    let m_dict = py.import("sys")?.getattr("modules")?;
+    let m_dict = m.py().import_bound("sys")?.getattr("modules")?;
     m.add_wrapped(pyo3::wrap_pymodule!(shapes::pymodule))?;
     m_dict.set_item("xdot_rs.shapes", m.getattr("shapes")?)?;
     m.add_wrapped(pyo3::wrap_pymodule!(draw::pymodule))?;

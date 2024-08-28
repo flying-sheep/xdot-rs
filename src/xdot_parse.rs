@@ -11,7 +11,9 @@ pub use self::draw::Pen;
 use self::shapes::Shape;
 
 #[cfg(feature = "pyo3")]
-fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
+fn try_into_shape(shape: &pyo3::Bound<'_, pyo3::PyAny>) -> pyo3::PyResult<Shape> {
+    use pyo3::prelude::*;
+
     if let Ok(ell) = shape.extract::<shapes::Ellipse>() {
         Ok(ell.into())
     } else if let Ok(points) = shape.extract::<shapes::Points>() {
@@ -28,7 +30,7 @@ fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
 
 /// A [Shape] together with a [Pen].
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass(module = "xdot_rs"))]
+#[cfg_attr(feature = "pyo3", pyo3::pyclass(eq, module = "xdot_rs"))]
 pub struct ShapeDraw {
     // #[pyo3(get, set)] not possible with cfg_attr
     pub pen: Pen,
@@ -38,7 +40,7 @@ pub struct ShapeDraw {
 #[pyo3::pymethods]
 impl ShapeDraw {
     #[new]
-    fn new(shape: &pyo3::PyAny, pen: Pen) -> pyo3::PyResult<Self> {
+    fn new(shape: &pyo3::Bound<'_, pyo3::PyAny>, pen: Pen) -> pyo3::PyResult<Self> {
         let shape = try_into_shape(shape)?;
         Ok(ShapeDraw { shape, pen })
     }
@@ -60,19 +62,17 @@ impl ShapeDraw {
         }
     }
     #[setter]
-    fn set_shape(&mut self, shape: &pyo3::PyAny) -> pyo3::PyResult<()> {
+    fn set_shape(&mut self, shape: &pyo3::Bound<'_, pyo3::PyAny>) -> pyo3::PyResult<()> {
         self.shape = try_into_shape(shape)?;
         Ok(())
     }
 }
-impl_richcmp_eq!(ShapeDraw);
 
 #[cfg(feature = "pyo3")]
 #[test]
 fn cmp_equal() {
     use super::*;
     use pyo3::prelude::*;
-    use pyo3::pyclass::CompareOp;
 
     pyo3::prepare_freethreaded_python();
 
@@ -84,9 +84,14 @@ fn cmp_equal() {
         filled: true,
     };
     Python::with_gil(|py| {
-        let a = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
-        let b = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
-        assert!(a.__richcmp__(&b, CompareOp::Eq, py).extract::<bool>(py)?);
+        let a = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
+        let b = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
+        assert!(a
+            .into_py(py)
+            .bind(py)
+            .getattr("__eq__")?
+            .call1((b,))?
+            .extract::<bool>()?);
         Ok::<(), PyErr>(())
     })
     .unwrap();
