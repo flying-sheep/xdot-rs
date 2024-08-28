@@ -73,7 +73,6 @@ impl ShapeDraw {
 fn cmp_equal() {
     use super::*;
     use pyo3::prelude::*;
-    use pyo3::pyclass::CompareOp;
 
     pyo3::prepare_freethreaded_python();
 
@@ -87,7 +86,12 @@ fn cmp_equal() {
     Python::with_gil(|py| {
         let a = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
         let b = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
-        assert!(a.__richcmp__(&b, CompareOp::Eq, py).extract::<bool>(py)?);
+        assert!(a
+            .into_py(py)
+            .bind(py)
+            .getattr("__eq__")?
+            .call1((b,))?
+            .extract::<bool>()?);
         Ok::<(), PyErr>(())
     })
     .unwrap();
