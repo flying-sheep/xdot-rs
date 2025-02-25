@@ -53,12 +53,15 @@ impl ShapeDraw {
         self.pen = pen;
     }
     #[getter]
-    fn get_shape(&self, py: pyo3::Python) -> pyo3::PyObject {
-        use pyo3::IntoPy;
+    fn get_shape<'py>(
+        &self,
+        py: pyo3::Python<'py>,
+    ) -> pyo3::PyResult<pyo3::Bound<'py, pyo3::PyAny>> {
+        use pyo3::IntoPyObjectExt;
         match &self.shape {
-            Shape::Ellipse(e) => e.clone().into_py(py),
-            Shape::Points(p) => p.clone().into_py(py),
-            Shape::Text(t) => t.clone().into_py(py),
+            Shape::Ellipse(e) => e.clone().into_bound_py_any(py),
+            Shape::Points(p) => p.clone().into_bound_py_any(py),
+            Shape::Text(t) => t.clone().into_bound_py_any(py),
         }
     }
     #[setter]
@@ -72,7 +75,7 @@ impl ShapeDraw {
 #[test]
 fn cmp_equal() {
     use super::*;
-    use pyo3::prelude::*;
+    use pyo3::{IntoPyObjectExt, prelude::*};
 
     pyo3::prepare_freethreaded_python();
 
@@ -84,14 +87,14 @@ fn cmp_equal() {
         filled: true,
     };
     Python::with_gil(|py| {
-        let a = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
-        let b = ShapeDraw::new(ellip.clone().into_py(py).bind(py), Pen::default())?;
-        assert!(a
-            .into_py(py)
-            .bind(py)
-            .getattr("__eq__")?
-            .call1((b,))?
-            .extract::<bool>()?);
+        let a = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
+        let b = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
+        assert!(
+            a.into_bound_py_any(py)?
+                .getattr("__eq__")?
+                .call1((b,))?
+                .extract::<bool>()?
+        );
         Ok::<(), PyErr>(())
     })
     .unwrap();
@@ -127,7 +130,7 @@ pub fn parse(input: &str) -> Result<Vec<ShapeDraw>, NomError<&str>> {
 #[pyo3::pyfunction]
 #[pyo3(name = "parse")]
 pub fn parse_py(input: &str) -> pyo3::PyResult<Vec<ShapeDraw>> {
-    use pyo3::{exceptions::PyValueError, PyErr};
+    use pyo3::{PyErr, exceptions::PyValueError};
 
     parse(input).map_err(|e| PyErr::new::<PyValueError, _>(e.to_string()))
 }
