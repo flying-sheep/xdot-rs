@@ -3,15 +3,15 @@ use graphviz_rust::{
     dot_structures::{Attribute, Graph, Id},
     printer::PrinterContext,
 };
-use nom::{error::Error as NomError, Finish};
+use nom::{Finish, error::Error as NomError};
 use thiserror::Error;
 
 mod graph_ext;
 
 use self::graph_ext::{Elem, GraphExt};
 use super::{
-    xdot_parse::{parse, ShapeDraw},
     ATTR_NAMES,
+    xdot_parse::{ShapeDraw, parse},
 };
 
 /// Error wrapping possible errors that can occur when running [draw_graph].

@@ -3,6 +3,7 @@
 use std::str::FromStr;
 
 use nom::{
+    Finish, IResult, ToUsize,
     branch::alt,
     bytes::complete::{tag, take_while_m_n},
     character::complete::{char, multispace0, multispace1, one_of},
@@ -11,7 +12,6 @@ use nom::{
     multi::{count, many0, many1, separated_list1},
     number::complete::float,
     sequence::{delimited, preceded, separated_pair, terminated, tuple},
-    Finish, IResult, ToUsize,
 };
 
 use super::shapes::ExternalImage;
