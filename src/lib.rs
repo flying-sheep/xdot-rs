@@ -18,10 +18,10 @@ mod layout;
 mod xdot_parse;
 
 #[cfg(feature = "layout")]
-pub use self::layout::{draw_graph, layout_and_draw_graph, LayoutError};
+pub use self::layout::{LayoutError, draw_graph, layout_and_draw_graph};
 #[cfg(feature = "pyo3")]
 use self::xdot_parse::parse_py;
-pub use self::xdot_parse::{draw, parse, shapes, ShapeDraw};
+pub use self::xdot_parse::{ShapeDraw, draw, parse, shapes};
 
 /// Known node/edge attribute names holding `xdot` draw instructions that [parse] can handle.
 ///
@@ -39,7 +39,7 @@ pub fn pymodule(m: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()
 
     m.add_class::<ShapeDraw>()?;
     m.add_function(pyo3::wrap_pyfunction!(parse_py, m)?)?;
-    let m_dict = m.py().import_bound("sys")?.getattr("modules")?;
+    let m_dict = m.py().import("sys")?.getattr("modules")?;
     m.add_wrapped(pyo3::wrap_pymodule!(shapes::pymodule))?;
     m_dict.set_item("xdot_rs.shapes", m.getattr("shapes")?)?;
     m.add_wrapped(pyo3::wrap_pymodule!(draw::pymodule))?;
