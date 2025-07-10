@@ -108,7 +108,7 @@ impl FontCharacteristics {
         fc
     }
     fn __repr__(&self) -> String {
-        format!("{:?}", self)
+        format!("{self:?}")
     }
 }
 impl_bitflags_accessors!(
