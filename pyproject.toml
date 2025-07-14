@@ -1,5 +1,5 @@
 [build-system]
-requires = ['maturin>=1.0.0-beta.6']
+requires = ['maturin>=1.9,<2.0']
 build-backend = 'maturin'
 
 [project]
@@ -7,11 +7,11 @@ name = 'xdot-rs'
 authors = [{ name = 'Philipp A.', email = 'flying-sheep@web.de' }]
 readme = 'README.md'
 classifiers = [
-    'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
     'Programming Language :: Python :: 3',
 ]
+license = 'GPL-3.0-or-later'
 urls.Source = 'https://github.com/flying-sheep/xdot-rs'
 dynamic = ['version', 'description']
 requires-python = '>=3.8'
