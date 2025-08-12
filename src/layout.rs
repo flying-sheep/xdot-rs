@@ -71,7 +71,7 @@ pub fn draw_graph(graph: Graph) -> Result<Vec<ShapeDraw>, NomError<String>> {
         .collect::<Vec<_>>())
 }
 
-fn handle_elem(elem: Elem) -> Result<Vec<ShapeDraw>, NomError<&str>> {
+fn handle_elem(elem: Elem<'_>) -> Result<Vec<ShapeDraw>, NomError<&str>> {
     let attributes: &[Attribute] = match elem {
         Elem::Edge(edge) => edge.attributes.as_ref(),
         Elem::Node(node) => node.attributes.as_ref(),
