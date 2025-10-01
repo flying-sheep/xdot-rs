@@ -3,7 +3,7 @@ use graphviz_rust::{
     dot_structures::{Attribute, Graph, Id},
     printer::PrinterContext,
 };
-use nom::{Finish, error::Error as NomError};
+use nom::{Finish, Parser as _, error::Error as NomError};
 use thiserror::Error;
 
 mod graph_ext;
@@ -103,7 +103,8 @@ fn dot_unescape(input: &str) -> Result<&str, NomError<&str>> {
     let (_, inner) = terminated(
         delimited(tag("\""), take_while(|c| c != '\\' && c != '\"'), tag("\"")),
         eof,
-    )(input)
+    )
+    .parse(input)
     .finish()?;
     Ok(inner)
 }

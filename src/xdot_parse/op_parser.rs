@@ -3,7 +3,7 @@
 use std::str::FromStr;
 
 use nom::{
-    Finish, IResult, ToUsize,
+    Finish, IResult, Parser, ToUsize,
     branch::alt,
     bytes::complete::{tag, take_while_m_n},
     character::complete::{char, multispace0, multispace1, one_of},
@@ -11,7 +11,7 @@ use nom::{
     error::{Error as NomError, ParseError},
     multi::{count, many0, many1, separated_list1},
     number::complete::float,
-    sequence::{delimited, preceded, separated_pair, terminated, tuple},
+    sequence::{delimited, preceded, separated_pair, terminated},
 };
 
 use super::shapes::ExternalImage;
@@ -43,26 +43,26 @@ fn take_bytes<'a, C: ToUsize, E: ParseError<&'a str>>(
 }
 
 fn decimal(input: &str) -> IResult<&str, &str> {
-    recognize(many1(terminated(one_of("0123456789"), many0(char('_')))))(input)
+    recognize(many1(terminated(one_of("0123456789"), many0(char('_'))))).parse(input)
 }
 
 /// A combinator that takes a parser `inner` and produces a parser that also consumes both leading and
 /// trailing whitespace, returning the output of `inner`.
-fn ws<'a, F, O, E: ParseError<&'a str>>(inner: F) -> impl FnMut(&'a str) -> IResult<&'a str, O, E>
+fn ws<'a, F, O, E: ParseError<&'a str>>(inner: F) -> impl Parser<&'a str, Output = O, Error = E>
 where
-    F: FnMut(&'a str) -> IResult<&'a str, O, E>,
+    F: Parser<&'a str, Output = O, Error = E>,
 {
     delimited(multispace0, inner, multispace0)
 }
 
-fn tagged<'a, F, O, E: ParseError<&'a str>>(
+fn tagged<'a, P, O, E: ParseError<&'a str>>(
     t: &'static str,
-    inner: F,
-) -> impl FnMut(&'a str) -> IResult<&'a str, O, E>
+    inner: P,
+) -> impl Parser<&'a str, Output = O, Error = E>
 where
-    F: FnMut(&'a str) -> IResult<&'a str, O, E>,
+    P: Parser<&'a str, Output = O, Error = E>,
 {
-    preceded(tuple((tag(t), multispace1)), inner)
+    preceded((tag(t), multispace1), inner)
 }
 
 // Data type parsers
@@ -70,8 +70,9 @@ where
 /// Parse xdot’s “n -b₁b₂...bₙ” pattern
 fn parse_string(input: &str) -> IResult<&str, &str> {
     flat_map(map_res(decimal, usize::from_str), |n| {
-        preceded(tuple((multispace1, tag("-"))), take_bytes(n))
-    })(input)
+        preceded((multispace1, tag("-")), take_bytes(n))
+    })
+    .parse(input)
 }
 
 fn parse_text_align(input: &str) -> IResult<&str, TextAlign> {
@@ -79,7 +80,8 @@ fn parse_text_align(input: &str) -> IResult<&str, TextAlign> {
         value(TextAlign::Left, tag("-1")),
         value(TextAlign::Center, tag("0")),
         value(TextAlign::Right, tag("1")),
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn from_hex(input: &str) -> Result<u8, std::num::ParseIntError> {
@@ -91,25 +93,26 @@ fn is_hex_digit(c: char) -> bool {
 }
 
 fn hex_primary(input: &str) -> IResult<&str, u8> {
-    map_res(take_while_m_n(2, 2, is_hex_digit), from_hex)(input)
+    map_res(take_while_m_n(2, 2, is_hex_digit), from_hex).parse(input)
 }
 
 fn hex_color(input: &str) -> IResult<&str, Rgba> {
     let (input, _) = tag("#")(input)?;
-    let (input, (r, g, b)) = tuple((hex_primary, hex_primary, hex_primary))(input)?;
+    let (input, (r, g, b)) = (hex_primary, hex_primary, hex_primary).parse(input)?;
     Ok((input, Rgba { r, g, b, a: 0xff }))
 }
 
 // Op parsers
 
 fn parse_op_draw_shape_ellipse(input: &str) -> IResult<&str, Op> {
-    let (input, (c, x, y, w, h)) = tuple((
+    let (input, (c, x, y, w, h)) = (
         one_of("Ee"),
         preceded(multispace1, float),
         preceded(multispace1, float),
         preceded(multispace1, float),
         preceded(multispace1, float),
-    ))(input)?;
+    )
+        .parse(input)?;
     let ellip = Ellipse {
         filled: c == 'E',
         x,
@@ -121,15 +124,16 @@ fn parse_op_draw_shape_ellipse(input: &str) -> IResult<&str, Op> {
 }
 
 fn parse_op_draw_shape_points(input: &str) -> IResult<&str, Op> {
-    let (input, (c, points)) = tuple((
+    let (input, (c, points)) = (
         terminated(one_of("PpLBb"), multispace1),
         flat_map(map_res(decimal, usize::from_str), |n| {
             count(
-                tuple((preceded(multispace1, float), preceded(multispace1, float))),
+                (preceded(multispace1, float), preceded(multispace1, float)),
                 n,
             )
         }),
-    ))(input)?;
+    )
+        .parse(input)?;
     let points = Points {
         filled: c == 'P' || c == 'b',
         r#type: match c {
@@ -146,14 +150,15 @@ fn parse_op_draw_shape_points(input: &str) -> IResult<&str, Op> {
 fn parse_op_draw_shape_text(input: &str) -> IResult<&str, Op> {
     let (input, (x, y, align, width, text)) = tagged(
         "T",
-        tuple((
+        (
             terminated(float, multispace1),            // x
             terminated(float, multispace1),            // y
             terminated(parse_text_align, multispace1), // align
             terminated(float, multispace1),            // width
             parse_string,
-        )),
-    )(input)?;
+        ),
+    )
+    .parse(input)?;
     let text = Text {
         x,
         y,
@@ -169,7 +174,8 @@ fn parse_op_draw_shape(input: &str) -> IResult<&str, Op> {
         parse_op_draw_shape_ellipse,
         parse_op_draw_shape_points,
         parse_op_draw_shape_text,
-    ))(input)
+    ))
+    .parse(input)
 }
 
 fn parse_op_set_font_characteristics(input: &str) -> IResult<&str, Op> {
@@ -178,27 +184,28 @@ fn parse_op_set_font_characteristics(input: &str) -> IResult<&str, Op> {
         map_res(decimal, |value| {
             u128::from_str(value).map(|n| FontCharacteristics::from_bits_truncate(n).into())
         }),
-    )(input)
+    )
+    .parse(input)
 }
 
 fn parse_op_set_color<'a>(
     t: &'static str,
     op: impl FnMut(Rgba) -> Op,
-) -> impl FnMut(&'a str) -> IResult<&'a str, Op> {
+) -> impl Parser<&'a str, Output = Op, Error = NomError<&'a str>> {
     map(tagged(t, map_parser(parse_string, hex_color)), op)
 }
 
 fn parse_op_set_fill_color(input: &str) -> IResult<&str, Op> {
-    parse_op_set_color("C", Op::SetFillColor)(input)
+    parse_op_set_color("C", Op::SetFillColor).parse(input)
 }
 
 fn parse_op_set_pen_color(input: &str) -> IResult<&str, Op> {
-    parse_op_set_color("c", Op::SetPenColor)(input)
+    parse_op_set_color("c", Op::SetPenColor).parse(input)
 }
 
 fn parse_op_set_font(input: &str) -> IResult<&str, Op> {
     let (input, (size, name)) =
-        tagged("F", separated_pair(float, multispace1, parse_string))(input)?;
+        tagged("F", separated_pair(float, multispace1, parse_string)).parse(input)?;
     Ok((
         input,
         Op::SetFont {
@@ -209,14 +216,14 @@ fn parse_op_set_font(input: &str) -> IResult<&str, Op> {
 }
 
 fn parse_op_set_style(input: &str) -> IResult<&str, Op> {
-    let (input, style) = tagged("S", map_res(parse_string, Style::from_str))(input)?;
+    let (input, style) = tagged("S", map_res(parse_string, Style::from_str)).parse(input)?;
     Ok((input, style.into()))
 }
 
 fn parse_op_external_image(input: &str) -> IResult<&str, Op> {
     // TODO: implement
     use nom::combinator::{cut, fail};
-    map(tagged("I", cut(fail)), |_: ()| ExternalImage.into())(input)
+    map(tagged("I", cut(fail())), |_: ()| ExternalImage.into()).parse(input)
 }
 
 fn parse_op(input: &str) -> IResult<&str, Op> {
@@ -228,11 +235,13 @@ fn parse_op(input: &str) -> IResult<&str, Op> {
         parse_op_set_font,
         parse_op_set_style,
         parse_op_external_image,
-    ))(input)
+    ))
+    .parse(input)
 }
 
 pub(super) fn parse(input: &str) -> Result<Vec<Op>, NomError<&str>> {
-    terminated(ws(separated_list1(multispace1, parse_op)), eof)(input)
+    terminated(ws(separated_list1(multispace1, parse_op)), eof)
+        .parse(input)
         .finish()
         .map(|(rest, ops)| {
             assert_eq!(rest, "");
