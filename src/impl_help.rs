@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! impl_bitflags_accessors {
     ($cls: path, $( $flag: ident ),+ $(,)?) => {
-        paste::paste! {
+        pastey::paste! {
             #[cfg(feature = "pyo3")]
             #[pyo3::pymethods]
             impl $cls {
