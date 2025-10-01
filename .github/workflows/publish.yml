@@ -15,20 +15,14 @@ jobs:
     permissions:
       id-token: write # to authenticate as Trusted Publisher to pypi.org
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v5
+    - uses: actions/setup-python@v6
       with:
-        python-version: |
-            3.8
-            3.9
-            3.10
-            3.11
+        python-version: '3.x'
         cache: pip
-        cache-dependency-path: pyproject.toml
     - uses: dtolnay/rust-toolchain@stable
     - uses: PyO3/maturin-action@v1
       with:
-        maturin-version: v1.0.0-beta.7
         command: build
         args: --sdist --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
     - uses: pypa/gh-action-pypi-publish@release/v1
