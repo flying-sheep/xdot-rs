@@ -36,13 +36,7 @@ jobs:
     - run: just fmt --check
     - run: just test
   doc:
-    name: Build and publish docs
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    name: Build docs
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
@@ -53,9 +47,25 @@ jobs:
         tool: just
     - uses: Swatinem/rust-cache@v2
     - run: just doc
-    - uses: actions/upload-pages-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
+        name: wheels
         path: target/doc
+  publish:
+    name: Publish docs
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+    - uses: actions/download-artifact@v5
+      with:
+        name: wheels
+        path: _site
+    - uses: actions/upload-pages-artifact@v4
     - uses: actions/deploy-pages@v4
-      if: github.ref_name == 'main'
       id: deployment
