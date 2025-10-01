@@ -77,7 +77,7 @@ fn cmp_equal() {
     use super::*;
     use pyo3::{IntoPyObjectExt, prelude::*};
 
-    pyo3::prepare_freethreaded_python();
+    Python::initialize();
 
     let ellip = shapes::Ellipse {
         x: 0.,
@@ -86,7 +86,7 @@ fn cmp_equal() {
         h: 0.,
         filled: true,
     };
-    Python::with_gil(|py| {
+    Python::attach(|py| {
         let a = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
         let b = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
         assert!(
