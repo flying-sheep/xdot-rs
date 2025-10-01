@@ -2,6 +2,9 @@ name: Publish Python package
 # Rust crate is published in release workflow
 
 on:
+  push:
+    branches: [main]
+  pull_request:
   release:
     types: [published]
 
@@ -9,11 +12,8 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
-    environment: publish
-    permissions:
-      id-token: write # to authenticate as Trusted Publisher to pypi.org
     steps:
     - uses: actions/checkout@v5
     - uses: actions/setup-python@v6
@@ -24,7 +24,20 @@ jobs:
     - uses: PyO3/maturin-action@v1
       with:
         command: build
-        args: --sdist --release -i python3.8 -i python3.9 -i python3.10 -i python3.11
-    - uses: pypa/gh-action-pypi-publish@release/v1
+        args: --sdist --release
+    - uses: actions/upload-artifact@v4
       with:
-        packages-dir: target/wheels
+        name: wheels
+        path: target/wheels
+  publish:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment: publish
+    permissions:
+      id-token: write # to authenticate as Trusted Publisher to pypi.org
+    steps:
+    - uses: actions/download-artifact@v5
+      with:
+        name: wheels
+        path: dist
+    - uses: pypa/gh-action-pypi-publish@release/v1
