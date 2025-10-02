@@ -1,5 +1,3 @@
-#![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_cfg))]
-
 //! Parse and draw [`xdot`](https://graphviz.org/docs/attr-types/xdot/) shapes.
 //!
 //! ## Example
