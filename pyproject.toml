@@ -6,7 +6,7 @@ requires = [ "maturin>=1.9,<2" ]
 [project]
 name = "xdot-rs"
 readme = "README.md"
-license = 'GPL-3.0-or-later'
+license = "GPL-3.0-OR-later"
 authors = [ { name = 'Philipp A.', email = 'flying-sheep@web.de' } ]
 requires-python = ">=3.8"
 classifiers = [
