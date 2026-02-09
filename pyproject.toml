@@ -1,13 +1,12 @@
 [build-system]
-build-backend = 'maturin'
-
+build-backend = "maturin"
 requires = [ "maturin>=1.9,<2" ]
 
 [project]
 name = "xdot-rs"
 readme = "README.md"
 license = "GPL-3.0-OR-later"
-authors = [ { name = 'Philipp A.', email = 'flying-sheep@web.de' } ]
+authors = [ { name = "Philipp A.", email = "flying-sheep@web.de" } ]
 requires-python = ">=3.8"
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -22,8 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
 ]
 dynamic = [ "description", "version" ]
-dependencies = [  ]
-
+dependencies = []
 optional-dependencies.dev = [
   "maturin", # CLI
   "prek",    # auto-formatting
@@ -31,11 +29,11 @@ optional-dependencies.dev = [
 optional-dependencies.test = [
   "pytest",
 ]
-urls.Source = 'https://github.com/flying-sheep/xdot-rs'
+urls.Source = "https://github.com/flying-sheep/xdot-rs"
 
 [tool.maturin]
-module-name = 'xdot_rs'
-features = [ 'extension-module' ]
+module-name = "xdot_rs"
+features = [ "extension-module" ]
 
 [tool.ruff]
 lint.select = [
