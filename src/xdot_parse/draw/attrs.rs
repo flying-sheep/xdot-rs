@@ -7,7 +7,7 @@ use bitflags::bitflags;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(get_all, set_all, module = "xdot_rs.draw")
+    pyo3::pyclass(eq, get_all, set_all, from_py_object, module = "xdot_rs.draw")
 )]
 pub struct Rgba {
     pub r: u8,
@@ -25,14 +25,13 @@ impl Default for Rgba {
         }
     }
 }
-impl_richcmp_eq!(Rgba);
 
 /// Line style for node borders and edges.
 /// See [here](https://graphviz.org/docs/attr-types/style/).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(get_all, set_all, module = "xdot_rs.draw")
+    pyo3::pyclass(eq, eq_int, get_all, set_all, from_py_object, module = "xdot_rs.draw")
 )]
 pub enum Style {
     Dashed,
@@ -57,15 +56,14 @@ impl FromStr for Style {
         })
     }
 }
-impl_richcmp_eq!(Style);
 
 bitflags! {
     /// Font weight and decorations.
     /// Matches values defined [here](https://graphviz.org/docs/outputs/canon/#xdot).
-    #[derive(Default)]
+    #[derive(Default, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     #[cfg_attr(
         feature = "pyo3",
-        pyo3::pyclass(get_all, set_all, module = "xdot_rs.draw")
+        pyo3::pyclass(eq, from_py_object, module = "xdot_rs.draw")
     )]
     pub struct FontCharacteristics: u128 {
         const BOLD           = 0b00000001;
@@ -110,7 +108,7 @@ impl FontCharacteristics {
         fc
     }
     fn __repr__(&self) -> String {
-        format!("FontCharacteristics({:?})", self)
+        format!("{self:?}")
     }
 }
 impl_bitflags_accessors!(
@@ -123,4 +121,3 @@ impl_bitflags_accessors!(
     strike_through,
     overline,
 );
-impl_richcmp_eq!(FontCharacteristics);

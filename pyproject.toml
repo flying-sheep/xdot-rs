@@ -1,39 +1,45 @@
 [build-system]
-requires = ['maturin>=1.0.0-beta.6']
-build-backend = 'maturin'
+build-backend = "maturin"
+requires = [ "maturin>=1.9,<2" ]
 
 [project]
-name = 'xdot-rs'
-authors = [{ name = 'Philipp A.', email = 'flying-sheep@web.de' }]
-readme = 'README.md'
+name = "xdot-rs"
+readme = "README.md"
+license = "GPL-3.0-OR-later"
+authors = [ { name = "Philipp A.", email = "flying-sheep@web.de" } ]
+requires-python = ">=3.8"
 classifiers = [
-    'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-    'Development Status :: 4 - Beta',
-    'Intended Audience :: Developers',
-    'Programming Language :: Python :: 3',
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
-urls.Source = 'https://github.com/flying-sheep/xdot-rs'
-dynamic = ['version', 'description']
-requires-python = '>=3.8'
+dynamic = [ "description", "version" ]
 dependencies = []
+urls.Source = "https://github.com/flying-sheep/xdot-rs"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-    'maturin',  # CLI
-    'pre-commit',  # auto-formatting
-    'black',  # VS Code format on save
+  "maturin", # CLI
+  "prek",    # auto-formatting
 ]
 test = [
-    'pytest',
+  "pytest",
 ]
 
 [tool.maturin]
-module-name = 'xdot_rs'
-features = ['extension-module']
+module-name = "xdot_rs"
+features = [ "extension-module" ]
 
 [tool.ruff]
-select = [
-    'E',  # pycodestyle
-    'F',  # pyflakes
-    'I',  # isort
+lint.select = [
+  "E", # pycodestyle
+  "F", # pyflakes
+  "I", # isort
 ]

@@ -11,7 +11,9 @@ pub use self::draw::Pen;
 use self::shapes::Shape;
 
 #[cfg(feature = "pyo3")]
-fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
+fn try_into_shape(shape: &pyo3::Bound<'_, pyo3::PyAny>) -> pyo3::PyResult<Shape> {
+    use pyo3::prelude::*;
+
     if let Ok(ell) = shape.extract::<shapes::Ellipse>() {
         Ok(ell.into())
     } else if let Ok(points) = shape.extract::<shapes::Points>() {
@@ -28,7 +30,10 @@ fn try_into_shape(shape: &pyo3::PyAny) -> pyo3::PyResult<Shape> {
 
 /// A [Shape] together with a [Pen].
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass(module = "xdot_rs"))]
+#[cfg_attr(
+    feature = "pyo3",
+    pyo3::pyclass(eq, from_py_object, module = "xdot_rs")
+)]
 pub struct ShapeDraw {
     // #[pyo3(get, set)] not possible with cfg_attr
     pub pen: Pen,
@@ -38,7 +43,7 @@ pub struct ShapeDraw {
 #[pyo3::pymethods]
 impl ShapeDraw {
     #[new]
-    fn new(shape: &pyo3::PyAny, pen: Pen) -> pyo3::PyResult<Self> {
+    fn new(shape: &pyo3::Bound<'_, pyo3::PyAny>, pen: Pen) -> pyo3::PyResult<Self> {
         let shape = try_into_shape(shape)?;
         Ok(ShapeDraw { shape, pen })
     }
@@ -51,30 +56,31 @@ impl ShapeDraw {
         self.pen = pen;
     }
     #[getter]
-    fn get_shape(&self, py: pyo3::Python) -> pyo3::PyObject {
-        use pyo3::IntoPy;
+    fn get_shape<'py>(
+        &self,
+        py: pyo3::Python<'py>,
+    ) -> pyo3::PyResult<pyo3::Bound<'py, pyo3::PyAny>> {
+        use pyo3::IntoPyObjectExt;
         match &self.shape {
-            Shape::Ellipse(e) => e.clone().into_py(py),
-            Shape::Points(p) => p.clone().into_py(py),
-            Shape::Text(t) => t.clone().into_py(py),
+            Shape::Ellipse(e) => e.clone().into_bound_py_any(py),
+            Shape::Points(p) => p.clone().into_bound_py_any(py),
+            Shape::Text(t) => t.clone().into_bound_py_any(py),
         }
     }
     #[setter]
-    fn set_shape(&mut self, shape: &pyo3::PyAny) -> pyo3::PyResult<()> {
+    fn set_shape(&mut self, shape: &pyo3::Bound<'_, pyo3::PyAny>) -> pyo3::PyResult<()> {
         self.shape = try_into_shape(shape)?;
         Ok(())
     }
 }
-impl_richcmp_eq!(ShapeDraw);
 
 #[cfg(feature = "pyo3")]
 #[test]
 fn cmp_equal() {
     use super::*;
-    use pyo3::prelude::*;
-    use pyo3::pyclass::CompareOp;
+    use pyo3::{IntoPyObjectExt, prelude::*};
 
-    pyo3::prepare_freethreaded_python();
+    Python::initialize();
 
     let ellip = shapes::Ellipse {
         x: 0.,
@@ -83,10 +89,15 @@ fn cmp_equal() {
         h: 0.,
         filled: true,
     };
-    Python::with_gil(|py| {
-        let a = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
-        let b = ShapeDraw::new(ellip.clone().into_py(py).as_ref(py), Pen::default())?;
-        assert!(a.__richcmp__(&b, CompareOp::Eq, py).extract::<bool>(py)?);
+    Python::attach(|py| {
+        let a = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
+        let b = ShapeDraw::new(&ellip.clone().into_bound_py_any(py)?, Pen::default())?;
+        assert!(
+            a.into_bound_py_any(py)?
+                .getattr("__eq__")?
+                .call1((b,))?
+                .extract::<bool>()?
+        );
         Ok::<(), PyErr>(())
     })
     .unwrap();
@@ -116,13 +127,4 @@ pub fn parse(input: &str) -> Result<Vec<ShapeDraw>, NomError<&str>> {
         }
     }
     Ok(shape_draws)
-}
-
-#[cfg(feature = "pyo3")]
-#[pyo3::pyfunction]
-#[pyo3(name = "parse")]
-pub fn parse_py(input: &str) -> pyo3::PyResult<Vec<ShapeDraw>> {
-    use pyo3::{exceptions::PyValueError, PyErr};
-
-    parse(input).map_err(|e| PyErr::new::<PyValueError, _>(e.to_string()))
 }

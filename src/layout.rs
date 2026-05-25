@@ -3,15 +3,15 @@ use graphviz_rust::{
     dot_structures::{Attribute, Graph, Id},
     printer::PrinterContext,
 };
-use nom::{error::Error as NomError, Finish};
+use nom::{Finish, Parser as _, error::Error as NomError};
 use thiserror::Error;
 
 mod graph_ext;
 
 use self::graph_ext::{Elem, GraphExt};
 use super::{
-    xdot_parse::{parse, ShapeDraw},
     ATTR_NAMES,
+    xdot_parse::{ShapeDraw, parse},
 };
 
 /// Error wrapping possible errors that can occur when running [draw_graph].
@@ -19,6 +19,8 @@ use super::{
 pub enum LayoutError {
     #[error("failed to run xdot")]
     Layout(#[from] std::io::Error),
+    #[error("failed to parse dot")]
+    Decode(std::string::FromUtf8Error),
     #[error("failed to parse dot")]
     ParseDot(String),
     #[error("failed to parse xdot attributes")]
@@ -52,6 +54,7 @@ fn layout_graph(graph: Graph) -> Result<Graph, LayoutError> {
             CommandArg::Format(Format::Xdot),
         ],
     )?;
+    let layed_out = String::from_utf8(layed_out).map_err(LayoutError::Decode)?;
     // println!("{}", &layed_out);
     graphviz_rust::parse(&layed_out).map_err(LayoutError::ParseDot)
 }
@@ -68,7 +71,7 @@ pub fn draw_graph(graph: Graph) -> Result<Vec<ShapeDraw>, NomError<String>> {
         .collect::<Vec<_>>())
 }
 
-fn handle_elem(elem: Elem) -> Result<Vec<ShapeDraw>, NomError<&str>> {
+fn handle_elem(elem: Elem<'_>) -> Result<Vec<ShapeDraw>, NomError<&str>> {
     let attributes: &[Attribute] = match elem {
         Elem::Edge(edge) => edge.attributes.as_ref(),
         Elem::Node(node) => node.attributes.as_ref(),
@@ -100,7 +103,8 @@ fn dot_unescape(input: &str) -> Result<&str, NomError<&str>> {
     let (_, inner) = terminated(
         delimited(tag("\""), take_while(|c| c != '\\' && c != '\"'), tag("\"")),
         eof,
-    )(input)
+    )
+    .parse(input)
     .finish()?;
     Ok(inner)
 }
