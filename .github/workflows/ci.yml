@@ -31,7 +31,7 @@ jobs:
         tool: cargo-hack,just
     - uses: Swatinem/rust-cache@v2
     - run: just build
-    - run: pip install .[test]
+    - run: pip install --group=test .
     - run: just check
     - run: just fmt --check
     - run: just test
