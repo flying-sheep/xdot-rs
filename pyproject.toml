@@ -22,14 +22,16 @@ classifiers = [
 ]
 dynamic = [ "description", "version" ]
 dependencies = []
-optional-dependencies.dev = [
+urls.Source = "https://github.com/flying-sheep/xdot-rs"
+
+[dependency-groups]
+dev = [
   "maturin", # CLI
   "prek",    # auto-formatting
 ]
-optional-dependencies.test = [
+test = [
   "pytest",
 ]
-urls.Source = "https://github.com/flying-sheep/xdot-rs"
 
 [tool.maturin]
 module-name = "xdot_rs"

@@ -7,7 +7,7 @@ use bitflags::bitflags;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, get_all, set_all, module = "xdot_rs.draw")
+    pyo3::pyclass(eq, get_all, set_all, from_py_object, module = "xdot_rs.draw")
 )]
 pub struct Rgba {
     pub r: u8,
@@ -31,7 +31,7 @@ impl Default for Rgba {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, eq_int, get_all, set_all, module = "xdot_rs.draw")
+    pyo3::pyclass(eq, eq_int, get_all, set_all, from_py_object, module = "xdot_rs.draw")
 )]
 pub enum Style {
     Dashed,
@@ -63,7 +63,7 @@ bitflags! {
     #[derive(Default, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
     #[cfg_attr(
         feature = "pyo3",
-        pyo3::pyclass(eq, module = "xdot_rs.draw")
+        pyo3::pyclass(eq, from_py_object, module = "xdot_rs.draw")
     )]
     pub struct FontCharacteristics: u128 {
         const BOLD           = 0b00000001;

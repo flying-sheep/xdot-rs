@@ -30,7 +30,10 @@ fn try_into_shape(shape: &pyo3::Bound<'_, pyo3::PyAny>) -> pyo3::PyResult<Shape>
 
 /// A [Shape] together with a [Pen].
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass(eq, module = "xdot_rs"))]
+#[cfg_attr(
+    feature = "pyo3",
+    pyo3::pyclass(eq, from_py_object, module = "xdot_rs")
+)]
 pub struct ShapeDraw {
     // #[pyo3(get, set)] not possible with cfg_attr
     pub pen: Pen,
@@ -124,13 +127,4 @@ pub fn parse(input: &str) -> Result<Vec<ShapeDraw>, NomError<&str>> {
         }
     }
     Ok(shape_draws)
-}
-
-#[cfg(feature = "pyo3")]
-#[pyo3::pyfunction]
-#[pyo3(name = "parse")]
-pub fn parse_py(input: &str) -> pyo3::PyResult<Vec<ShapeDraw>> {
-    use pyo3::{PyErr, exceptions::PyValueError};
-
-    parse(input).map_err(|e| PyErr::new::<PyValueError, _>(e.to_string()))
 }

@@ -12,7 +12,7 @@ pub enum Shape {
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, get_all, set_all, module = "xdot_rs.shapes")
+    pyo3::pyclass(eq, get_all, set_all, from_py_object, module = "xdot_rs.shapes")
 )]
 pub struct Ellipse {
     pub filled: bool,
@@ -40,7 +40,14 @@ impl From<Ellipse> for Shape {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, eq_int, get_all, set_all, module = "xdot_rs.shapes")
+    pyo3::pyclass(
+        eq,
+        eq_int,
+        get_all,
+        set_all,
+        from_py_object,
+        module = "xdot_rs.shapes"
+    )
 )]
 pub enum PointsType {
     Polygon,
@@ -51,7 +58,7 @@ pub enum PointsType {
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, get_all, set_all, module = "xdot_rs.shapes")
+    pyo3::pyclass(eq, get_all, set_all, from_py_object, module = "xdot_rs.shapes")
 )]
 pub struct Points {
     pub filled: bool,
@@ -81,7 +88,14 @@ impl From<Points> for Shape {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, eq_int, get_all, set_all, module = "xdot_rs.shapes")
+    pyo3::pyclass(
+        eq,
+        eq_int,
+        get_all,
+        set_all,
+        from_py_object,
+        module = "xdot_rs.shapes"
+    )
 )]
 pub enum TextAlign {
     Left,
@@ -92,7 +106,7 @@ pub enum TextAlign {
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(
     feature = "pyo3",
-    pyo3::pyclass(eq, get_all, set_all, module = "xdot_rs.shapes")
+    pyo3::pyclass(eq, get_all, set_all, from_py_object, module = "xdot_rs.shapes")
 )]
 pub struct Text {
     pub x: f32,
@@ -124,20 +138,15 @@ impl From<Text> for Shape {
 /// External image, currently unimplemented.
 #[doc(hidden)]
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "pyo3", pyo3::pyclass(module = "xdot_rs.shapes"))]
+#[cfg_attr(
+    feature = "pyo3",
+    pyo3::pyclass(from_py_object, module = "xdot_rs.shapes")
+)]
 pub struct ExternalImage;
 
 #[cfg(feature = "pyo3")]
 #[pyo3::pymodule]
-#[pyo3(name = "shapes")]
-pub fn pymodule(m: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()> {
-    use pyo3::prelude::*;
-
-    m.add_class::<Ellipse>()?;
-    m.add_class::<PointsType>()?;
-    m.add_class::<Points>()?;
-    m.add_class::<TextAlign>()?;
-    m.add_class::<Text>()?;
-    m.add_class::<ExternalImage>()?;
-    Ok(())
+pub mod shapes {
+    #[pymodule_export]
+    pub use super::{Ellipse, ExternalImage, Points, PointsType, Text, TextAlign};
 }
