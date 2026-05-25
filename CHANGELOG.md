@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4](https://github.com/flying-sheep/xdot-rs/compare/v0.2.3...v0.2.4) - 2026-05-25
+
+### Added
+
+- type stubs ([#245](https://github.com/flying-sheep/xdot-rs/pull/245))
+
 ## [0.2.3](https://github.com/flying-sheep/xdot-rs/compare/v0.2.2...v0.2.3) - 2023-04-20
 
 ### Other
