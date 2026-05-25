@@ -1,6 +1,6 @@
 [package]
 name = 'xdot'
-version = "0.3.0"
+version = "0.2.4"
 authors = ['Philipp A. <flying-sheep@web.de>']
 edition = '2021'
 description = 'Parse graphviz’ xdot draw instructions'
