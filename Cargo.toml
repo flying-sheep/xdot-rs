@@ -19,9 +19,7 @@ all-features = true
 ## [graphviz_rust]’s [Graph](graphviz_rust::dot_structures::Graph)s
 ## using [draw_graph].
 layout = ['graphviz-rust', 'thiserror']
-## The `extension-module` feature enables using the crate from Python.
-extension-module = ['pyo3', 'pyo3/extension-module']
-## The `pyo3` module is for testing Python features.
+## The `pyo3` feature is for using the crate from Python.
 pyo3 = ['dep:pyo3']
 
 [dependencies]
