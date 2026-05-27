@@ -35,7 +35,6 @@ test = [
 
 [tool.maturin]
 module-name = "xdot_rs"
-features = [ "extension-module" ]
 
 [tool.ruff]
 lint.select = [
